@@ -1,10 +1,9 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Send, ShoppingCart, Calendar, DollarSign, X, Loader2 } from 'lucide-react';
+import { Send, ShoppingCart, Calendar, DollarSign, X, Loader2, Car } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
@@ -12,7 +11,7 @@ type Message = {
   id: string;
   text: string;
   isBot: boolean;
-  type?: 'product' | 'booking' | 'bargain' | 'normal';
+  type?: 'product' | 'booking' | 'bargain' | 'car' | 'normal';
   metadata?: any;
 };
 
@@ -36,6 +35,17 @@ type Bargain = {
   discountedPrice: number;
   discount: number;
   item: string;
+};
+
+type CarRental = {
+  id: string;
+  name: string;
+  image: string;
+  price: number;
+  seats: number;
+  transmission: string;
+  location: string;
+  available: string;
 };
 
 // Demo products for the chatbot to offer
@@ -81,6 +91,30 @@ const demoBargains: Bargain[] = [
   }
 ];
 
+// Demo car rentals for the chatbot to offer
+const demoCarRentals: CarRental[] = [
+  {
+    id: 'car1',
+    name: 'Economy Car',
+    image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&auto=format&fit=crop&q=80',
+    price: 35,
+    seats: 4,
+    transmission: 'Automatic',
+    location: 'Bangkok Airport',
+    available: 'June 10-17, 2025'
+  },
+  {
+    id: 'car2',
+    name: 'Compact SUV',
+    image: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=400&auto=format&fit=crop&q=80',
+    price: 55,
+    seats: 5,
+    transmission: 'Automatic',
+    location: 'Phuket International Airport',
+    available: 'July 15-25, 2025'
+  }
+];
+
 interface AIChatProps {
   onClose: () => void;
 }
@@ -89,7 +123,7 @@ export default function AIChat({ onClose }: AIChatProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: 'Hi there! I\'m your Wanderlust AI assistant. I can help you discover destinations, find travel packages, add products to your cart, and even negotiate prices! How can I assist you today?',
+      text: 'Hi there! I\'m your Wanderlust AI assistant. I can help you discover destinations, find travel packages, add products to your cart, book car rentals, and even negotiate prices! How can I assist you today?',
       isBot: true
     }
   ]);
@@ -138,11 +172,13 @@ export default function AIChat({ onClose }: AIChatProps) {
       simulateTyping(() => handleBookingQuery());
     } else if (lowercaseInput.includes('bargain') || lowercaseInput.includes('discount') || lowercaseInput.includes('deal') || lowercaseInput.includes('cheaper')) {
       simulateTyping(() => handleBargainQuery());
+    } else if (lowercaseInput.includes('car') || lowercaseInput.includes('rental') || lowercaseInput.includes('vehicle') || lowercaseInput.includes('hire')) {
+      simulateTyping(() => handleCarRentalQuery());
     } else {
       simulateTyping(() => {
         setMessages(prev => [...prev, {
           id: Date.now().toString(),
-          text: "I'm here to help with travel planning! You can ask me about destinations, products for your trip, making bookings, or finding special deals and discounts. What would you like to know?",
+          text: "I'm here to help with travel planning! You can ask me about destinations, car rentals, products for your trip, making bookings, or finding special deals and discounts. What would you like to know?",
           isBot: true
         }]);
       });
@@ -211,6 +247,18 @@ export default function AIChat({ onClose }: AIChatProps) {
     }]);
   };
 
+  const handleCarRentalQuery = () => {
+    setMessages(prev => [...prev, {
+      id: Date.now().toString(),
+      text: "Here are some car rental options that might interest you:",
+      isBot: true,
+      type: 'car',
+      metadata: {
+        cars: demoCarRentals
+      }
+    }]);
+  };
+
   const addToCart = (product: Product) => {
     setCart(prev => [...prev, product]);
     
@@ -233,6 +281,14 @@ export default function AIChat({ onClose }: AIChatProps) {
     setMessages(prev => [...prev, {
       id: Date.now().toString(),
       text: `Amazing! I've applied a ${bargain.discount}% discount to your ${bargain.item} package. Your final price is now $${bargain.discountedPrice} (down from $${bargain.originalPrice}). Would you like to book this package now?`,
+      isBot: true
+    }]);
+  };
+
+  const bookCar = (car: CarRental) => {
+    setMessages(prev => [...prev, {
+      id: Date.now().toString(),
+      text: `Great choice! I've reserved the ${car.name} for ${car.available} at ${car.location}. The daily rate is $${car.price}. Would you like to proceed to payment or have any questions about this rental?`,
       isBot: true
     }]);
   };
@@ -348,6 +404,43 @@ export default function AIChat({ onClose }: AIChatProps) {
                         Accept Deal
                       </Button>
                     </Card>
+                  </div>
+                )}
+                
+                {message.type === 'car' && message.metadata?.cars && (
+                  <div className="space-y-3 mb-2">
+                    {message.metadata.cars.map((car: CarRental) => (
+                      <Card key={car.id} className="p-3">
+                        <div className="flex gap-3">
+                          <img 
+                            src={car.image} 
+                            alt={car.name} 
+                            className="h-16 w-16 object-cover rounded"
+                          />
+                          <div className="flex-1">
+                            <div className="flex justify-between">
+                              <h4 className="font-medium">{car.name}</h4>
+                              <Badge variant="teal">${car.price}/day</Badge>
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              {car.seats} seats • {car.transmission}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              <Calendar className="h-3 w-3 inline mr-1" />
+                              {car.available}
+                            </p>
+                            <Button 
+                              size="sm" 
+                              onClick={() => bookCar(car)}
+                              className="bg-wanderlust-teal h-8 w-full mt-2 flex items-center gap-1"
+                            >
+                              <Car className="h-4 w-4" />
+                              Book This Car
+                            </Button>
+                          </div>
+                        </div>
+                      </Card>
+                    ))}
                   </div>
                 )}
                 

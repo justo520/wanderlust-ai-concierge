@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingCart, Menu, X, User } from 'lucide-react';
+import { ShoppingCart, Menu, X, User, Car } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -24,6 +24,7 @@ export default function Navbar({ cartItemCount = 0 }: { cartItemCount?: number }
               <NavLink href="/" label="Home" />
               <NavLink href="/destinations" label="Destinations" />
               <NavLink href="/packages" label="Packages" />
+              <NavLink href="/car-hire" label="Car Hire" />
               <NavLink href="/shop" label="Shop" />
               <NavLink href="/about" label="About" />
             </div>
@@ -59,6 +60,7 @@ export default function Navbar({ cartItemCount = 0 }: { cartItemCount?: number }
           <MobileNavLink href="/" label="Home" />
           <MobileNavLink href="/destinations" label="Destinations" />
           <MobileNavLink href="/packages" label="Packages" />
+          <MobileNavLink href="/car-hire" label="Car Hire" />
           <MobileNavLink href="/shop" label="Shop" />
           <MobileNavLink href="/about" label="About" />
         </div>
