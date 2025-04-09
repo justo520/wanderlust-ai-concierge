@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
@@ -15,6 +16,8 @@ const badgeVariants = cva(
         destructive:
           "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
         outline: "text-foreground",
+        sand: "border-transparent bg-wanderlust-sand text-wanderlust-blue hover:bg-wanderlust-sand/80",
+        teal: "border-transparent bg-wanderlust-teal text-white hover:bg-wanderlust-teal/80",
       },
     },
     defaultVariants: {
