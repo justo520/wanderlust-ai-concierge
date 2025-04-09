@@ -13,6 +13,7 @@ export function setupNavigation() {
       <nav class="main-nav">
         <ul class="nav-list">
           <li><a href="/" class="nav-link">Home</a></li>
+          <li><a href="/destinations" class="nav-link">Destinations</a></li>
           <li><a href="/car-hire" class="nav-link">Car Hire</a></li>
         </ul>
       </nav>
