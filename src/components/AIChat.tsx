@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -117,9 +118,10 @@ const demoCarRentals: CarRental[] = [
 
 interface AIChatProps {
   onClose: () => void;
+  initialPrompt?: string;
 }
 
-export default function AIChat({ onClose }: AIChatProps) {
+export default function AIChat({ onClose, initialPrompt }: AIChatProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -127,7 +129,7 @@ export default function AIChat({ onClose }: AIChatProps) {
       isBot: true
     }
   ]);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState(initialPrompt || '');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [cart, setCart] = useState<Product[]>([]);
@@ -139,6 +141,13 @@ export default function AIChat({ onClose }: AIChatProps) {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Process initial prompt if provided
+  useEffect(() => {
+    if (initialPrompt) {
+      handleSend();
+    }
+  }, []);
 
   const simulateTyping = (callback: () => void) => {
     setIsTyping(true);
@@ -250,7 +259,7 @@ export default function AIChat({ onClose }: AIChatProps) {
   const handleCarRentalQuery = () => {
     setMessages(prev => [...prev, {
       id: Date.now().toString(),
-      text: "Here are some car rental options that might interest you:",
+      text: "I'd be happy to help you book a car rental! Here are some options available:",
       isBot: true,
       type: 'car',
       metadata: {

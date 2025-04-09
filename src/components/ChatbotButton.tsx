@@ -6,9 +6,16 @@ import AIChat from './AIChat';
 
 export default function ChatbotButton() {
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [initialPrompt, setInitialPrompt] = useState('');
 
   const toggleChat = () => {
     setIsChatOpen(!isChatOpen);
+    setInitialPrompt(''); // Reset the initial prompt when toggling
+  };
+
+  const openChatWithPrompt = (prompt: string) => {
+    setInitialPrompt(prompt);
+    setIsChatOpen(true);
   };
 
   return (
@@ -27,7 +34,7 @@ export default function ChatbotButton() {
 
       {isChatOpen && (
         <div className="fixed bottom-24 right-6 z-50 w-full max-w-md bg-white rounded-lg shadow-xl animate-fade-in">
-          <AIChat onClose={() => setIsChatOpen(false)} />
+          <AIChat onClose={() => setIsChatOpen(false)} initialPrompt={initialPrompt} />
         </div>
       )}
     </>
